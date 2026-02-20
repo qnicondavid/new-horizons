@@ -1,0 +1,344 @@
+CREATE TABLE ACCOMMODATION 
+    (
+     accommodation_id INTEGER NOT NULL , 
+     type VARCHAR (50) NOT NULL , 
+     name VARCHAR (100) NOT NULL , 
+     price_per_night NUMERIC (10,2) NOT NULL , 
+     location VARCHAR (100) NOT NULL , 
+     description VARCHAR (500) NOT NULL 
+    )
+GO
+
+ALTER TABLE ACCOMMODATION ADD CONSTRAINT ACCOMODATION_PK PRIMARY KEY CLUSTERED (accommodation_id)
+     WITH (
+     ALLOW_PAGE_LOCKS = ON , 
+     ALLOW_ROW_LOCKS = ON )
+GO
+
+CREATE TABLE ACCOMMODATION_PACKAGE 
+    (
+     notes VARCHAR (500) , 
+     TRAVEL_PACKAGE_package_id INTEGER NOT NULL , 
+     ACCOMMODATION_accommodation_id INTEGER NOT NULL 
+    )
+GO
+
+CREATE TABLE BOOKING 
+    (
+     booking_id INTEGER NOT NULL , 
+     CLIENT_client_id INTEGER NOT NULL , 
+     booking_date DATE NOT NULL , 
+     travel_start_date DATE NOT NULL , 
+     travel_end_date DATE NOT NULL , 
+     status VARCHAR (20) NOT NULL , 
+     total_amount NUMERIC (10,2) NOT NULL , 
+     payment_status VARCHAR (20) NOT NULL , 
+     TRAVEL_PACKAGE_package_id INTEGER NOT NULL 
+    )
+GO
+
+ALTER TABLE BOOKING ADD CONSTRAINT BOOKING_PK PRIMARY KEY CLUSTERED (booking_id)
+     WITH (
+     ALLOW_PAGE_LOCKS = ON , 
+     ALLOW_ROW_LOCKS = ON )
+GO
+
+CREATE TABLE CLIENT 
+    (
+     client_id INTEGER NOT NULL , 
+     first_name VARCHAR (50) NOT NULL , 
+     last_name VARCHAR (50) NOT NULL , 
+     email VARCHAR (100) NOT NULL , 
+     phone_number VARCHAR (20) , 
+     date_of_birth DATE , 
+     passport_number VARCHAR (20) , 
+     registration_date DATE NOT NULL , 
+     loyalty_points INTEGER NOT NULL 
+    )
+GO
+
+ALTER TABLE CLIENT ADD CONSTRAINT CLIENT_PK PRIMARY KEY CLUSTERED (client_id)
+     WITH (
+     ALLOW_PAGE_LOCKS = ON , 
+     ALLOW_ROW_LOCKS = ON )
+GO
+
+CREATE TABLE DESTINATION 
+    (
+     destination_id INTEGER NOT NULL , 
+     country VARCHAR (100) NOT NULL , 
+     city VARCHAR (100) NOT NULL , 
+     description VARCHAR (500) , 
+     airport_code VARCHAR (10) 
+    )
+GO
+
+ALTER TABLE DESTINATION ADD CONSTRAINT DESTINATION_PK PRIMARY KEY CLUSTERED (destination_id)
+     WITH (
+     ALLOW_PAGE_LOCKS = ON , 
+     ALLOW_ROW_LOCKS = ON )
+GO
+
+CREATE TABLE DESTINATION_PACKAGE 
+    (
+     notes VARCHAR (500) , 
+     TRAVEL_PACKAGE_package_id INTEGER NOT NULL , 
+     DESTINATION_destination_id INTEGER NOT NULL 
+    )
+GO
+
+CREATE TABLE GROUP_PACKAGE 
+    (
+     number_of_people INTEGER NOT NULL , 
+     guide_included BIT NOT NULL , 
+     description VARCHAR (500) , 
+     TRAVEL_PACKAGE_package_id INTEGER NOT NULL , 
+     GROUP_PACKAGE_ID NUMERIC (28) NOT NULL IDENTITY NOT FOR REPLICATION 
+    )
+GO
+
+ALTER TABLE GROUP_PACKAGE ADD CONSTRAINT GROUP_PACKAGE_PK PRIMARY KEY CLUSTERED (GROUP_PACKAGE_ID)
+     WITH (
+     ALLOW_PAGE_LOCKS = ON , 
+     ALLOW_ROW_LOCKS = ON )
+GO
+
+CREATE TABLE GUIDE 
+    (
+     guide_id INTEGER NOT NULL , 
+     name VARCHAR (50) NOT NULL , 
+     languages_spoken VARCHAR (200) NOT NULL , 
+     years_of_experience INTEGER , 
+     rating NUMERIC (10,2) NOT NULL 
+    )
+GO
+
+ALTER TABLE GUIDE ADD CONSTRAINT GUIDE_PK PRIMARY KEY CLUSTERED (guide_id)
+     WITH (
+     ALLOW_PAGE_LOCKS = ON , 
+     ALLOW_ROW_LOCKS = ON )
+GO
+
+CREATE TABLE GUIDE_PACKAGE 
+    (
+     notes VARCHAR (500) , 
+     GUIDE_guide_id INTEGER NOT NULL , 
+     GROUP_PACKAGE_GROUP_PACKAGE_ID NUMERIC (28) NOT NULL 
+    )
+GO
+
+CREATE TABLE INVOICE 
+    (
+     invoice_id INTEGER NOT NULL , 
+     BOOKING_booking_id INTEGER NOT NULL , 
+     invoice_date DATE NOT NULL , 
+     amount NUMERIC (10,2) NOT NULL , 
+     due_date DATE , 
+     status VARCHAR (20) NOT NULL , 
+     payment_method VARCHAR (30) 
+    )
+GO
+
+ALTER TABLE INVOICE ADD CONSTRAINT INVOICE_PK PRIMARY KEY CLUSTERED (invoice_id)
+     WITH (
+     ALLOW_PAGE_LOCKS = ON , 
+     ALLOW_ROW_LOCKS = ON )
+GO
+
+CREATE TABLE TRANSPORT 
+    (
+     transport_id INTEGER NOT NULL , 
+     type VARCHAR (50) NOT NULL , 
+     company VARCHAR (50) , 
+     seat_class VARCHAR (30) NOT NULL , 
+     duration TIME NOT NULL 
+    )
+GO
+
+ALTER TABLE TRANSPORT ADD CONSTRAINT TRANSPORT_PK PRIMARY KEY CLUSTERED (transport_id)
+     WITH (
+     ALLOW_PAGE_LOCKS = ON , 
+     ALLOW_ROW_LOCKS = ON )
+GO
+
+CREATE TABLE TRANSPORT_PACKAGE 
+    (
+     notes VARCHAR (500) , 
+     TRAVEL_PACKAGE_package_id INTEGER NOT NULL , 
+     TRANSPORT_transport_id INTEGER NOT NULL , 
+     seat_count INTEGER 
+    )
+GO
+
+CREATE TABLE TRAVEL_PACKAGE 
+    (
+     package_id INTEGER NOT NULL , 
+     package_name VARCHAR (100) NOT NULL , 
+     description VARCHAR (500) , 
+     price NUMERIC (10,2) NOT NULL , 
+     duration_days INTEGER NOT NULL , 
+     is_active BIT NOT NULL 
+    )
+GO
+
+ALTER TABLE TRAVEL_PACKAGE ADD CONSTRAINT TRAVEL_PACKAGE_PK PRIMARY KEY CLUSTERED (package_id)
+     WITH (
+     ALLOW_PAGE_LOCKS = ON , 
+     ALLOW_ROW_LOCKS = ON )
+GO
+
+ALTER TABLE ACCOMMODATION_PACKAGE 
+    ADD CONSTRAINT ACCOMMODATION_PACKAGE_ACCOMMODATION_FK FOREIGN KEY 
+    ( 
+     ACCOMMODATION_accommodation_id
+    ) 
+    REFERENCES ACCOMMODATION 
+    ( 
+     accommodation_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE ACCOMMODATION_PACKAGE 
+    ADD CONSTRAINT ACCOMMODATION_PACKAGE_TRAVEL_PACKAGE_FK FOREIGN KEY 
+    ( 
+     TRAVEL_PACKAGE_package_id
+    ) 
+    REFERENCES TRAVEL_PACKAGE 
+    ( 
+     package_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE BOOKING 
+    ADD CONSTRAINT BOOKING_CLIENT_FK FOREIGN KEY 
+    ( 
+     CLIENT_client_id
+    ) 
+    REFERENCES CLIENT 
+    ( 
+     client_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE BOOKING 
+    ADD CONSTRAINT BOOKING_TRAVEL_PACKAGE_FK FOREIGN KEY 
+    ( 
+     TRAVEL_PACKAGE_package_id
+    ) 
+    REFERENCES TRAVEL_PACKAGE 
+    ( 
+     package_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE DESTINATION_PACKAGE 
+    ADD CONSTRAINT DESTINATION_PACKAGE_DESTINATION_FK FOREIGN KEY 
+    ( 
+     DESTINATION_destination_id
+    ) 
+    REFERENCES DESTINATION 
+    ( 
+     destination_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE DESTINATION_PACKAGE 
+    ADD CONSTRAINT DESTINATION_PACKAGE_TRAVEL_PACKAGE_FK FOREIGN KEY 
+    ( 
+     TRAVEL_PACKAGE_package_id
+    ) 
+    REFERENCES TRAVEL_PACKAGE 
+    ( 
+     package_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE GROUP_PACKAGE 
+    ADD CONSTRAINT GROUP_PACKAGE_TRAVEL_PACKAGE_FK FOREIGN KEY 
+    ( 
+     TRAVEL_PACKAGE_package_id
+    ) 
+    REFERENCES TRAVEL_PACKAGE 
+    ( 
+     package_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE GUIDE_PACKAGE 
+    ADD CONSTRAINT GUIDE_PACKAGE_GROUP_PACKAGE_FK FOREIGN KEY 
+    ( 
+     GROUP_PACKAGE_GROUP_PACKAGE_ID
+    ) 
+    REFERENCES GROUP_PACKAGE 
+    ( 
+     GROUP_PACKAGE_ID 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE GUIDE_PACKAGE 
+    ADD CONSTRAINT GUIDE_PACKAGE_GUIDE_FK FOREIGN KEY 
+    ( 
+     GUIDE_guide_id
+    ) 
+    REFERENCES GUIDE 
+    ( 
+     guide_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE INVOICE 
+    ADD CONSTRAINT INVOICE_BOOKING_FK FOREIGN KEY 
+    ( 
+     BOOKING_booking_id
+    ) 
+    REFERENCES BOOKING 
+    ( 
+     booking_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE TRANSPORT_PACKAGE 
+    ADD CONSTRAINT TRANSPORT_PACKAGE_TRANSPORT_FK FOREIGN KEY 
+    ( 
+     TRANSPORT_transport_id
+    ) 
+    REFERENCES TRANSPORT 
+    ( 
+     transport_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
+
+ALTER TABLE TRANSPORT_PACKAGE 
+    ADD CONSTRAINT TRANSPORT_PACKAGE_TRAVEL_PACKAGE_FK FOREIGN KEY 
+    ( 
+     TRAVEL_PACKAGE_package_id
+    ) 
+    REFERENCES TRAVEL_PACKAGE 
+    ( 
+     package_id 
+    ) 
+    ON DELETE NO ACTION 
+    ON UPDATE NO ACTION 
+GO
