@@ -4,7 +4,8 @@ CREATE TABLE ACCOMMODATION (
     name VARCHAR(100) NOT NULL,
     price_per_night NUMERIC(10,2) NOT NULL,
     location VARCHAR(100) NOT NULL,
-    description VARCHAR(500) NOT NULL
+    description VARCHAR(500) NOT NULL,
+    CONSTRAINT chk_accommodation_price CHECK (price_per_night >= 0)
 );
 
 CREATE TABLE CLIENT (
@@ -16,7 +17,10 @@ CREATE TABLE CLIENT (
     date_of_birth DATE,
     passport_number VARCHAR(20),
     registration_date DATE NOT NULL,
-    loyalty_points INTEGER NOT NULL
+    loyalty_points INTEGER NOT NULL,
+    CONSTRAINT chk_client_email CHECK (email LIKE '%@%.%'),
+    CONSTRAINT chk_client_loyalty CHECK (loyalty_points >= 0),
+    CONSTRAINT chk_client_dob CHECK (date_of_birth < registration_date)
 );
 
 CREATE TABLE TRAVEL_PACKAGE (
@@ -25,7 +29,9 @@ CREATE TABLE TRAVEL_PACKAGE (
     description VARCHAR(500),
     price NUMERIC(10,2) NOT NULL,
     duration_days INTEGER NOT NULL,
-    is_active BOOLEAN NOT NULL
+    is_active BOOLEAN NOT NULL,
+    CONSTRAINT chk_package_price CHECK (price >= 0),
+    CONSTRAINT chk_package_duration CHECK (duration_days > 0)
 );
 
 CREATE TABLE DESTINATION (
@@ -49,7 +55,9 @@ CREATE TABLE GUIDE (
     name VARCHAR(50) NOT NULL,
     languages_spoken VARCHAR(200) NOT NULL,
     years_of_experience INTEGER,
-    rating NUMERIC(10,2) NOT NULL
+    rating NUMERIC(10,2) NOT NULL,
+    CONSTRAINT chk_guide_experience CHECK (years_of_experience >= 0),
+    CONSTRAINT chk_guide_rating CHECK (rating >= 0 AND rating <= 5)
 );
 
 CREATE TABLE BOOKING (
@@ -62,6 +70,10 @@ CREATE TABLE BOOKING (
     total_amount NUMERIC(10,2) NOT NULL,
     payment_status VARCHAR(20) NOT NULL,
     package_id INTEGER NOT NULL,
+    CONSTRAINT chk_booking_status CHECK (status IN ('Pending', 'Confirmed', 'Cancelled', 'Completed')),
+    CONSTRAINT chk_booking_payment_status CHECK (payment_status IN ('Paid', 'Unpaid', 'Partial', 'Refunded')),
+    CONSTRAINT chk_booking_amount CHECK (total_amount >= 0),
+    CONSTRAINT chk_booking_dates CHECK (travel_end_date >= travel_start_date),
     FOREIGN KEY (client_id) REFERENCES CLIENT(client_id),
     FOREIGN KEY (package_id) REFERENCES TRAVEL_PACKAGE(package_id)
 );
@@ -74,6 +86,9 @@ CREATE TABLE INVOICE (
     due_date DATE,
     status VARCHAR(20) NOT NULL,
     payment_method VARCHAR(30),
+    CONSTRAINT chk_invoice_status CHECK (status IN ('Paid', 'Pending', 'Overdue', 'Cancelled')),
+    CONSTRAINT chk_invoice_amount CHECK (amount >= 0),
+    CONSTRAINT chk_invoice_due_date CHECK (due_date >= invoice_date),
     FOREIGN KEY (booking_id) REFERENCES BOOKING(booking_id)
 );
 
@@ -83,6 +98,7 @@ CREATE TABLE GROUP_PACKAGE (
     guide_included BOOLEAN NOT NULL,
     description VARCHAR(500),
     package_id INTEGER NOT NULL,
+    CONSTRAINT chk_group_people CHECK (number_of_people > 0),
     FOREIGN KEY (package_id) REFERENCES TRAVEL_PACKAGE(package_id)
 );
 
@@ -111,6 +127,7 @@ CREATE TABLE TRANSPORT_PACKAGE (
     transport_id INTEGER NOT NULL,
     seat_count INTEGER,
     notes VARCHAR(500),
+    CONSTRAINT chk_transport_package_seats CHECK (seat_count > 0),
     PRIMARY KEY (package_id, transport_id),
     FOREIGN KEY (package_id) REFERENCES TRAVEL_PACKAGE(package_id),
     FOREIGN KEY (transport_id) REFERENCES TRANSPORT(transport_id)
