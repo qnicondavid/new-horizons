@@ -1,10 +1,9 @@
-SELECT 
+SELECT
     c.first_name || ' ' || c.last_name AS client_name,
-    tp.package_name,
-    b.booking_date,
-    b.total_amount,
-    b.payment_status
-FROM booking b
-JOIN client c ON b.client_id = c.client_id
-JOIN travel_package tp ON b.package_id = tp.package_id
-WHERE b.payment_status = 'Unpaid';
+    v.package_name,
+    v.booking_date,
+    v.total_amount,
+    v.payment_status
+FROM v_booking_total v
+JOIN client c ON v.client_id = c.client_id
+WHERE v.payment_status = 'Unpaid';

@@ -72,11 +72,11 @@ VALUES
 (1, 1, 'Lead guide for Paris group');
 
 -- BOOKINGS
-INSERT INTO BOOKING (client_id, booking_date, travel_start_date, travel_end_date, status, total_amount, payment_status, package_id)
+INSERT INTO BOOKING (client_id, booking_date, travel_start_date, travel_end_date, status, payment_status, package_id)
 VALUES
-(1, CURRENT_DATE, '2025-06-01', '2025-06-06', 'Confirmed', 1500.00, 'Paid', 1),
-(2, CURRENT_DATE, '2025-07-10', '2025-07-14', 'Confirmed', 1200.00, 'Unpaid', 2),
-(3, CURRENT_DATE, '2025-08-05', '2025-08-12', 'Pending', 2200.00, 'Unpaid', 3);
+(1, CURRENT_DATE, '2025-06-01', '2025-06-06', 'Confirmed', 'Paid', 1),
+(2, CURRENT_DATE, '2025-07-10', '2025-07-14', 'Confirmed', 'Unpaid', 2),
+(3, CURRENT_DATE, '2025-08-05', '2025-08-12', 'Pending', 'Unpaid', 3);
 
 -- INVOICES
 INSERT INTO INVOICE (booking_id, invoice_date, amount, due_date, status, payment_method)

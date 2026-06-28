@@ -67,12 +67,10 @@ CREATE TABLE BOOKING (
     travel_start_date DATE NOT NULL,
     travel_end_date DATE NOT NULL,
     status VARCHAR(20) NOT NULL,
-    total_amount NUMERIC(10,2) NOT NULL,
     payment_status VARCHAR(20) NOT NULL,
     package_id INTEGER NOT NULL,
     CONSTRAINT chk_booking_status CHECK (status IN ('Pending', 'Confirmed', 'Cancelled', 'Completed')),
     CONSTRAINT chk_booking_payment_status CHECK (payment_status IN ('Paid', 'Unpaid', 'Partial', 'Refunded')),
-    CONSTRAINT chk_booking_amount CHECK (total_amount >= 0),
     CONSTRAINT chk_booking_dates CHECK (travel_end_date >= travel_start_date),
     FOREIGN KEY (client_id) REFERENCES CLIENT(client_id),
     FOREIGN KEY (package_id) REFERENCES TRAVEL_PACKAGE(package_id)

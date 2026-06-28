@@ -1,7 +1,7 @@
-SELECT 
+SELECT
     tp.package_name,
-    COALESCE(SUM(b.total_amount), 0) AS expected_revenue
+    COALESCE(SUM(v.total_amount), 0) AS expected_revenue
 FROM travel_package tp
-LEFT JOIN booking b ON tp.package_id = b.package_id
+LEFT JOIN v_booking_total v ON tp.package_id = v.package_id
 GROUP BY tp.package_name
 ORDER BY expected_revenue DESC;
