@@ -7,7 +7,6 @@ CREATE TABLE ACCOMMODATION (
     description VARCHAR(500) NOT NULL,
     CONSTRAINT chk_accommodation_price CHECK (price_per_night >= 0)
 );
-
 CREATE TABLE CLIENT (
     client_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -22,7 +21,6 @@ CREATE TABLE CLIENT (
     CONSTRAINT chk_client_loyalty CHECK (loyalty_points >= 0),
     CONSTRAINT chk_client_dob CHECK (date_of_birth < registration_date)
 );
-
 CREATE TABLE TRAVEL_PACKAGE (
     package_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     package_name VARCHAR(100) NOT NULL,
@@ -33,7 +31,6 @@ CREATE TABLE TRAVEL_PACKAGE (
     CONSTRAINT chk_package_price CHECK (price >= 0),
     CONSTRAINT chk_package_duration CHECK (duration_days > 0)
 );
-
 CREATE TABLE DESTINATION (
     destination_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -41,7 +38,6 @@ CREATE TABLE DESTINATION (
     description VARCHAR(500),
     airport_code VARCHAR(10)
 );
-
 CREATE TABLE TRANSPORT (
     transport_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     type VARCHAR(50) NOT NULL,
@@ -49,7 +45,6 @@ CREATE TABLE TRANSPORT (
     seat_class VARCHAR(30) NOT NULL,
     duration TIME NOT NULL
 );
-
 CREATE TABLE GUIDE (
     guide_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
@@ -59,7 +54,6 @@ CREATE TABLE GUIDE (
     CONSTRAINT chk_guide_experience CHECK (years_of_experience >= 0),
     CONSTRAINT chk_guide_rating CHECK (rating >= 0 AND rating <= 5)
 );
-
 CREATE TABLE BOOKING (
     booking_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     client_id INTEGER NOT NULL,
@@ -75,7 +69,6 @@ CREATE TABLE BOOKING (
     FOREIGN KEY (client_id) REFERENCES CLIENT(client_id),
     FOREIGN KEY (package_id) REFERENCES TRAVEL_PACKAGE(package_id)
 );
-
 CREATE TABLE INVOICE (
     invoice_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     booking_id INTEGER NOT NULL,
@@ -89,7 +82,6 @@ CREATE TABLE INVOICE (
     CONSTRAINT chk_invoice_due_date CHECK (due_date >= invoice_date),
     FOREIGN KEY (booking_id) REFERENCES BOOKING(booking_id)
 );
-
 CREATE TABLE GROUP_PACKAGE (
     group_package_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     number_of_people INTEGER NOT NULL,
@@ -99,9 +91,6 @@ CREATE TABLE GROUP_PACKAGE (
     CONSTRAINT chk_group_people CHECK (number_of_people > 0),
     FOREIGN KEY (package_id) REFERENCES TRAVEL_PACKAGE(package_id)
 );
-
--- Bridge Tables
-
 CREATE TABLE ACCOMMODATION_PACKAGE (
     package_id INTEGER NOT NULL,
     accommodation_id INTEGER NOT NULL,
@@ -110,7 +99,6 @@ CREATE TABLE ACCOMMODATION_PACKAGE (
     FOREIGN KEY (package_id) REFERENCES TRAVEL_PACKAGE(package_id),
     FOREIGN KEY (accommodation_id) REFERENCES ACCOMMODATION(accommodation_id)
 );
-
 CREATE TABLE DESTINATION_PACKAGE (
     package_id INTEGER NOT NULL,
     destination_id INTEGER NOT NULL,
@@ -119,7 +107,6 @@ CREATE TABLE DESTINATION_PACKAGE (
     FOREIGN KEY (package_id) REFERENCES TRAVEL_PACKAGE(package_id),
     FOREIGN KEY (destination_id) REFERENCES DESTINATION(destination_id)
 );
-
 CREATE TABLE TRANSPORT_PACKAGE (
     package_id INTEGER NOT NULL,
     transport_id INTEGER NOT NULL,
@@ -130,7 +117,6 @@ CREATE TABLE TRANSPORT_PACKAGE (
     FOREIGN KEY (package_id) REFERENCES TRAVEL_PACKAGE(package_id),
     FOREIGN KEY (transport_id) REFERENCES TRANSPORT(transport_id)
 );
-
 CREATE TABLE GUIDE_PACKAGE (
     guide_id INTEGER NOT NULL,
     group_package_id INTEGER NOT NULL,
