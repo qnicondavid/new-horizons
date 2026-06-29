@@ -40,6 +40,7 @@ GROUP BY c.client_id, c.first_name, c.last_name, c.loyalty_points;
 CREATE OR REPLACE VIEW v_booking_billing AS
 SELECT
     b.booking_id,
+    b.client_id,
     tp.package_name,
     CASE WHEN b.status = 'Cancelled' THEN 0 ELSE tp.price END AS amount_due,
     COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'Paid'), 0) AS amount_paid,

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS CLIENT (
     date_of_birth DATE,
     passport_number VARCHAR(20),
     registration_date DATE NOT NULL,
-    loyalty_points INTEGER NOT NULL,
+    loyalty_points INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT chk_client_email CHECK (email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'),
     CONSTRAINT chk_client_email_lowercase CHECK (email = lower(email)),
     CONSTRAINT chk_client_loyalty CHECK (loyalty_points >= 0),
@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS DESTINATION (
     city VARCHAR(100) NOT NULL,
     description VARCHAR(500),
     airport_code CHAR(3),
+    CONSTRAINT chk_destination_airport_code CHECK (airport_code ~ '^[A-Z]{3}$'),
     CONSTRAINT uq_destination_country_city UNIQUE (country, city)
 );
 
@@ -52,6 +53,7 @@ CREATE TABLE IF NOT EXISTS TRANSPORT (
     company VARCHAR(50),
     seat_class VARCHAR(30) NOT NULL,
     duration INTERVAL NOT NULL,
+    CONSTRAINT chk_transport_type CHECK (type IN ('Flight', 'Train', 'Bus', 'Ferry', 'Car')),
     CONSTRAINT chk_transport_seat_class CHECK (seat_class IN ('Economy', 'Premium Economy', 'Business', 'First'))
 );
 
@@ -60,7 +62,7 @@ CREATE TABLE IF NOT EXISTS GUIDE (
     name VARCHAR(50) NOT NULL,
     languages_spoken VARCHAR(200) NOT NULL,
     years_of_experience INTEGER,
-    rating NUMERIC(3,2) NOT NULL,
+    rating NUMERIC(3,2),
     CONSTRAINT chk_guide_experience CHECK (years_of_experience >= 0),
     CONSTRAINT chk_guide_rating CHECK (rating >= 0 AND rating <= 5)
 );
