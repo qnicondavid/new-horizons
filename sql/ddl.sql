@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS GUIDE (
     name VARCHAR(50) NOT NULL,
     languages_spoken VARCHAR(200) NOT NULL,
     years_of_experience INTEGER,
-    rating NUMERIC(10,2) NOT NULL,
+    rating NUMERIC(3,2) NOT NULL,
     CONSTRAINT chk_guide_experience CHECK (years_of_experience >= 0),
     CONSTRAINT chk_guide_rating CHECK (rating >= 0 AND rating <= 5)
 );
@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS BOOKING (
     CONSTRAINT chk_booking_status CHECK (status IN ('Pending', 'Confirmed', 'Cancelled', 'Completed')),
     CONSTRAINT chk_booking_payment_status CHECK (payment_status IN ('Paid', 'Unpaid', 'Partial', 'Refunded')),
     CONSTRAINT chk_booking_dates CHECK (travel_end_date >= travel_start_date),
+    CONSTRAINT chk_booking_booked_before_travel CHECK (travel_start_date >= booking_date),
     FOREIGN KEY (client_id) REFERENCES CLIENT(client_id),
     FOREIGN KEY (package_id) REFERENCES TRAVEL_PACKAGE(package_id)
 );

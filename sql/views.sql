@@ -19,7 +19,7 @@ CREATE OR REPLACE VIEW v_package_revenue AS
 SELECT
     tp.package_id,
     tp.package_name,
-    COUNT(b.booking_id) AS total_bookings,
+    COUNT(b.booking_id) FILTER (WHERE b.status <> 'Cancelled') AS total_bookings,
     COALESCE(SUM(tp.price) FILTER (WHERE b.booking_id IS NOT NULL AND b.status <> 'Cancelled'), 0) AS expected_revenue
 FROM travel_package tp
 LEFT JOIN booking b ON tp.package_id = b.package_id
@@ -30,7 +30,7 @@ SELECT
     c.client_id,
     c.first_name || ' ' || c.last_name AS client_name,
     c.loyalty_points,
-    COUNT(b.booking_id) AS total_bookings,
+    COUNT(b.booking_id) FILTER (WHERE b.status <> 'Cancelled') AS total_bookings,
     COALESCE(SUM(tp.price) FILTER (WHERE b.status <> 'Cancelled'), 0) AS total_spend
 FROM client c
 LEFT JOIN booking b ON c.client_id = b.client_id
