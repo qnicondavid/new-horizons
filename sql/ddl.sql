@@ -17,7 +17,8 @@ CREATE TABLE CLIENT (
     passport_number VARCHAR(20),
     registration_date DATE NOT NULL,
     loyalty_points INTEGER NOT NULL,
-    CONSTRAINT chk_client_email CHECK (email LIKE '%@%.%'),
+    CONSTRAINT chk_client_email CHECK (email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'),
+    CONSTRAINT chk_client_email_lowercase CHECK (email = lower(email)),
     CONSTRAINT chk_client_loyalty CHECK (loyalty_points >= 0),
     CONSTRAINT chk_client_dob CHECK (date_of_birth < registration_date)
 );
