@@ -1,4 +1,4 @@
-SELECT 
+SELECT
     g.name AS guide_name,
     COUNT(gp.group_package_id) AS groups_led
 FROM guide g

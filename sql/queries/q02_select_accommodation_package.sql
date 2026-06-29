@@ -1,4 +1,4 @@
-SELECT 
+SELECT
     tp.package_name,
     a.name AS accommodation_name,
     d.city AS destination_city,

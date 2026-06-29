@@ -1,4 +1,4 @@
-SELECT 
+SELECT
     c.first_name || ' ' || c.last_name AS client_name,
     COUNT(b.booking_id) AS bookings_count
 FROM client c

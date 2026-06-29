@@ -1,4 +1,4 @@
-SELECT 
+SELECT
     tp.package_name,
     gp.group_package_id,
     gp.number_of_people

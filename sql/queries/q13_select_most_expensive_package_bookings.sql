@@ -1,4 +1,4 @@
-SELECT 
+SELECT
     tp.package_name,
     tp.price,
     COUNT(b.booking_id) AS total_bookings

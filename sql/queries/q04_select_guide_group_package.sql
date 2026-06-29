@@ -1,4 +1,4 @@
-SELECT 
+SELECT
     g.name AS guide_name,
     gp.group_package_id,
     gp.number_of_people,
