@@ -5,6 +5,7 @@ CREATE TABLE ACCOMMODATION (
     price_per_night NUMERIC(10,2) NOT NULL,
     location VARCHAR(100) NOT NULL,
     description VARCHAR(500) NOT NULL,
+    CONSTRAINT chk_accommodation_type CHECK (type IN ('Hotel', 'Hostel', 'Resort', 'Apartment', 'Guesthouse', 'Villa')),
     CONSTRAINT chk_accommodation_price CHECK (price_per_night >= 0)
 );
 CREATE TABLE CLIENT (
@@ -20,7 +21,8 @@ CREATE TABLE CLIENT (
     CONSTRAINT chk_client_email CHECK (email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'),
     CONSTRAINT chk_client_email_lowercase CHECK (email = lower(email)),
     CONSTRAINT chk_client_loyalty CHECK (loyalty_points >= 0),
-    CONSTRAINT chk_client_dob CHECK (date_of_birth < registration_date)
+    CONSTRAINT chk_client_dob CHECK (date_of_birth < registration_date),
+    CONSTRAINT uq_client_passport UNIQUE (passport_number)
 );
 CREATE TABLE TRAVEL_PACKAGE (
     package_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -37,14 +39,16 @@ CREATE TABLE DESTINATION (
     country VARCHAR(100) NOT NULL,
     city VARCHAR(100) NOT NULL,
     description VARCHAR(500),
-    airport_code VARCHAR(10)
+    airport_code VARCHAR(10),
+    CONSTRAINT uq_destination_country_city UNIQUE (country, city)
 );
 CREATE TABLE TRANSPORT (
     transport_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     type VARCHAR(50) NOT NULL,
     company VARCHAR(50),
     seat_class VARCHAR(30) NOT NULL,
-    duration TIME NOT NULL
+    duration TIME NOT NULL,
+    CONSTRAINT chk_transport_seat_class CHECK (seat_class IN ('Economy', 'Premium Economy', 'Business', 'First'))
 );
 CREATE TABLE GUIDE (
     guide_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -81,6 +85,7 @@ CREATE TABLE INVOICE (
     CONSTRAINT chk_invoice_status CHECK (status IN ('Paid', 'Pending', 'Overdue', 'Cancelled')),
     CONSTRAINT chk_invoice_amount CHECK (amount >= 0),
     CONSTRAINT chk_invoice_due_date CHECK (due_date >= invoice_date),
+    CONSTRAINT chk_invoice_payment_method CHECK (payment_method IN ('Credit Card', 'Bank Transfer', 'PayPal', 'Cash')),
     FOREIGN KEY (booking_id) REFERENCES BOOKING(booking_id)
 );
 CREATE TABLE GROUP_PACKAGE (

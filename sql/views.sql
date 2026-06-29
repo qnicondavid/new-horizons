@@ -1,4 +1,4 @@
-CREATE VIEW v_booking_total AS
+CREATE OR REPLACE VIEW v_booking_total AS
 SELECT
     b.booking_id,
     b.client_id,
@@ -13,7 +13,7 @@ SELECT
 FROM booking b
 JOIN travel_package tp ON b.package_id = tp.package_id;
 
-CREATE VIEW v_package_revenue AS
+CREATE OR REPLACE VIEW v_package_revenue AS
 SELECT
     tp.package_id,
     tp.package_name,
@@ -23,7 +23,7 @@ FROM travel_package tp
 LEFT JOIN booking b ON tp.package_id = b.package_id
 GROUP BY tp.package_id, tp.package_name;
 
-CREATE VIEW v_client_summary AS
+CREATE OR REPLACE VIEW v_client_summary AS
 SELECT
     c.client_id,
     c.first_name || ' ' || c.last_name AS client_name,
@@ -35,14 +35,15 @@ LEFT JOIN booking b ON c.client_id = b.client_id
 LEFT JOIN travel_package tp ON b.package_id = tp.package_id
 GROUP BY c.client_id, c.first_name, c.last_name, c.loyalty_points;
 
-CREATE VIEW v_booking_billing AS
+CREATE OR REPLACE VIEW v_booking_billing AS
 SELECT
     b.booking_id,
     tp.package_name,
     tp.price AS amount_due,
     COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'Paid'), 0) AS amount_paid,
-    tp.price - COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'Paid'), 0) AS balance,
-    b.payment_status
+    GREATEST(tp.price - COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'Paid'), 0), 0) AS balance,
+    b.payment_status,
+    COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'Paid'), 0) > tp.price AS is_overpaid
 FROM booking b
 JOIN travel_package tp ON b.package_id = tp.package_id
 LEFT JOIN invoice i ON i.booking_id = b.booking_id
