@@ -39,7 +39,7 @@ CREATE TABLE DESTINATION (
     country VARCHAR(100) NOT NULL,
     city VARCHAR(100) NOT NULL,
     description VARCHAR(500),
-    airport_code VARCHAR(10),
+    airport_code CHAR(3),
     CONSTRAINT uq_destination_country_city UNIQUE (country, city)
 );
 CREATE TABLE TRANSPORT (
@@ -47,7 +47,7 @@ CREATE TABLE TRANSPORT (
     type VARCHAR(50) NOT NULL,
     company VARCHAR(50),
     seat_class VARCHAR(30) NOT NULL,
-    duration TIME NOT NULL,
+    duration INTERVAL NOT NULL,
     CONSTRAINT chk_transport_seat_class CHECK (seat_class IN ('Economy', 'Premium Economy', 'Business', 'First'))
 );
 CREATE TABLE GUIDE (
@@ -79,7 +79,7 @@ CREATE TABLE INVOICE (
     booking_id INTEGER NOT NULL,
     invoice_date DATE NOT NULL,
     amount NUMERIC(10,2) NOT NULL,
-    due_date DATE,
+    due_date DATE NOT NULL,
     status VARCHAR(20) NOT NULL,
     payment_method VARCHAR(30),
     CONSTRAINT chk_invoice_status CHECK (status IN ('Paid', 'Pending', 'Overdue', 'Cancelled')),
@@ -116,7 +116,7 @@ CREATE TABLE DESTINATION_PACKAGE (
 CREATE TABLE TRANSPORT_PACKAGE (
     package_id INTEGER NOT NULL,
     transport_id INTEGER NOT NULL,
-    seat_count INTEGER,
+    seat_count INTEGER NOT NULL,
     notes VARCHAR(500),
     CONSTRAINT chk_transport_package_seats CHECK (seat_count > 0),
     PRIMARY KEY (package_id, transport_id),
