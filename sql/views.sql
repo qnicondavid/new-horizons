@@ -39,12 +39,14 @@ CREATE OR REPLACE VIEW v_booking_billing AS
 SELECT
     b.booking_id,
     tp.package_name,
-    tp.price AS amount_due,
+    CASE WHEN b.status = 'Cancelled' THEN 0 ELSE tp.price END AS amount_due,
     COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'Paid'), 0) AS amount_paid,
-    GREATEST(tp.price - COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'Paid'), 0), 0) AS balance,
+    GREATEST(CASE WHEN b.status = 'Cancelled' THEN 0 ELSE tp.price END
+             - COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'Paid'), 0), 0) AS balance,
     b.payment_status,
-    COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'Paid'), 0) > tp.price AS is_overpaid
+    COALESCE(SUM(i.amount) FILTER (WHERE i.status = 'Paid'), 0)
+             > CASE WHEN b.status = 'Cancelled' THEN 0 ELSE tp.price END AS is_overpaid
 FROM booking b
 JOIN travel_package tp ON b.package_id = tp.package_id
 LEFT JOIN invoice i ON i.booking_id = b.booking_id
-GROUP BY b.booking_id, tp.package_name, tp.price, b.payment_status;
+GROUP BY b.booking_id, b.status, tp.package_name, tp.price, b.payment_status;
