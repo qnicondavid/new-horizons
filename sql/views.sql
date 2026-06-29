@@ -52,4 +52,4 @@ SELECT
 FROM booking b
 JOIN travel_package tp ON b.package_id = tp.package_id
 LEFT JOIN invoice i ON i.booking_id = b.booking_id
-GROUP BY b.booking_id, b.status, tp.package_name, tp.price, b.payment_status;
+GROUP BY b.booking_id, b.client_id, b.status, tp.package_name, tp.price, b.payment_status;
