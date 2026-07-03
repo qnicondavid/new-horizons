@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: new_horizons
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: new_horizons
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install psql client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Build schema and seed (run_all.sql)
+        run: psql -v ON_ERROR_STOP=1 -f sql/run_all.sql
+      - name: Re-run build (idempotency)
+        run: psql -v ON_ERROR_STOP=1 -f sql/run_all.sql
+      - name: Assertion suite
+        run: psql -v ON_ERROR_STOP=1 -f test/assertions.sql
+      - name: Smoke-run all queries
+        run: |
+          for q in sql/queries/q*.sql; do
+            echo "-- $q"
+            psql -v ON_ERROR_STOP=1 -f "$q" > /dev/null
+          done
