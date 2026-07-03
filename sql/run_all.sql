@@ -4,5 +4,6 @@ DROP TABLE IF EXISTS guide_package, transport_package, destination_package, acco
 \ir sample_data.sql
 \ir views.sql
 \ir analytics.sql
+\ir data_quality.sql
 \ir functions.sql
 \ir indexes.sql
