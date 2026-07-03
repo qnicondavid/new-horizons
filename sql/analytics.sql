@@ -44,8 +44,8 @@ per_client AS (
         COUNT(b.booking_id) FILTER (WHERE b.status <> 'Cancelled') AS total_bookings,
         COALESCE(SUM(tp.price) FILTER (WHERE b.status <> 'Cancelled'), 0) AS total_booked_value,
         COALESCE(SUM(p.amount_paid) FILTER (WHERE b.status <> 'Cancelled'), 0) AS total_collected,
-        MIN(b.travel_start_date) FILTER (WHERE b.status <> 'Cancelled') AS first_trip,
-        MAX(b.travel_start_date) FILTER (WHERE b.status <> 'Cancelled') AS last_trip
+        MIN(b.travel_start_date) FILTER (WHERE b.status <> 'Cancelled') AS first_travel_start,
+        MAX(b.travel_start_date) FILTER (WHERE b.status <> 'Cancelled') AS last_travel_start
     FROM client c
     LEFT JOIN booking b ON b.client_id = c.client_id
     LEFT JOIN travel_package tp ON tp.package_id = b.package_id
@@ -58,9 +58,9 @@ SELECT
     total_bookings,
     total_booked_value,
     total_collected,
-    CASE WHEN total_bookings > 0 THEN ROUND(total_booked_value / total_bookings, 2) END AS avg_trip_value,
-    first_trip,
-    last_trip,
+    CASE WHEN total_bookings > 0 THEN ROUND(total_booked_value / total_bookings, 2) END AS avg_booked_trip_value,
+    first_travel_start,
+    last_travel_start,
     NTILE(4) OVER (ORDER BY total_collected DESC) AS value_quartile,
     RANK() OVER (ORDER BY total_collected DESC) AS collected_rank
 FROM per_client;

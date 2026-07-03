@@ -3,9 +3,9 @@ SELECT
     client_name,
     total_bookings,
     total_collected,
-    avg_trip_value,
+    avg_booked_trip_value,
     value_quartile,
-    last_trip
+    last_travel_start
 FROM v_client_ltv
 ORDER BY total_collected DESC, client_id
 LIMIT 20;
