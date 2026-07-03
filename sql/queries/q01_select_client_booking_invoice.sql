@@ -9,4 +9,5 @@ SELECT
     v.total_amount,
     v.payment_status
 FROM v_booking_total v
-JOIN client c ON v.client_id = c.client_id;
+JOIN client c ON v.client_id = c.client_id
+ORDER BY v.booking_id;

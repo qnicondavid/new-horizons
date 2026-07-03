@@ -1,6 +1,7 @@
 SELECT
-    SUM(amount) AS total_revenue,
-    COUNT(invoice_id) AS total_invoices,
-    status
+    status,
+    COUNT(invoice_id) AS invoice_count,
+    SUM(amount) AS invoiced_amount
 FROM invoice
-GROUP BY status;
+GROUP BY status
+ORDER BY status;
