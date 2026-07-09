@@ -217,4 +217,4 @@ test/assertions.sql      17 checks run against a live database
 
 `test/assertions.sql` has 17 checks written as plain `DO ... ASSERT` blocks: row counts, the data-quality invariants, agreement between `fn_booking_balance` and the billing view, no fan-out in the billing view, and a balanced `NTILE`. They need no extensions, so you can run them locally with psql.
 
-GitHub Actions runs the same work on every push against a `postgres:16` service. It builds `run_all.sql` twice to show the build is idempotent, runs the assertions, then executes all 18 queries.
+GitHub Actions runs the same work on every push to `main` and on pull requests, against a `postgres:16` service. It builds `run_all.sql` twice to show the build is idempotent, runs the assertions, then executes all 18 queries.
